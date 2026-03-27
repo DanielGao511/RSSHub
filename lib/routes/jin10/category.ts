@@ -172,7 +172,7 @@ export const route: Route = {
 async function handler(ctx) {
     const id = ctx.req.param('id');
     const data = await cache.tryGet(
-        'jin10:aa:${category}',
+        `jin10:category:important:${id}`,
         async () => {
             const { data: response } = await got('https://4a735ea38f8146198dc205d2e2d1bd28.z3c.jin10.com/flash', {
                 headers: {
@@ -185,7 +185,7 @@ async function handler(ctx) {
                     classify: `[${id}]`,
                 },
             });
-            return response.data.filter((item) => item.type !== 1);
+            return response.data.filter((item) => item.type !== 1 && item.important);
         },
         config.cache.routeExpire,
         false
@@ -206,7 +206,7 @@ async function handler(ctx) {
             title,
             description: renderDescription(content, item.data.pic),
             pubDate: timezone(parseDate(item.time), 8),
-            guid: `jin10:category:${item.id}`,
+            guid: `jin10:category:important:${item.id}`,
         };
     });
 
