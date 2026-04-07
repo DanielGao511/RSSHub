@@ -1,9 +1,13 @@
-﻿import { load } from 'cheerio';
+import { load } from 'cheerio';
 
 import cache from '@/utils/cache';
 import { getPuppeteerPage } from '@/utils/puppeteer';
 
 const rootUrl = 'https://www.gongkaoleida.com';
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const getListCount = (html: string) => load(html)('.notice-list .link-list > li').length;
 
 const puppeteerGet = (url: string) =>
     cache.tryGet(url, async () => {
@@ -25,9 +29,15 @@ const puppeteerGet = (url: string) =>
         });
 
         try {
-            await page.waitForSelector('.notice-list .link-list > li', { timeout: 15000 });
-            const html = await page.evaluate(() => document.documentElement.innerHTML);
-            return html;
+            // The page sometimes renders the area list late in containerized Chromium.
+            for (let attempt = 0; attempt < 8; attempt++) {
+                const html = await page.evaluate(() => document.documentElement.innerHTML);
+                if (getListCount(html) > 0) {
+                    return html;
+                }
+                await sleep(3000);
+            }
+            throw new Error('Gongkaoleida area list did not render in time');
         } finally {
             await destroy();
         }
@@ -62,4 +72,3 @@ const parseAreaList = (html: string) => {
 };
 
 export { buildAreaUrl, parseAreaList, puppeteerGet };
-
