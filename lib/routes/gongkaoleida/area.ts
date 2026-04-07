@@ -1,4 +1,4 @@
-﻿import dayjs from 'dayjs';
+import dayjs from 'dayjs';
 import type { Route } from '@/types';
 import { parseDate } from '@/utils/parse-date';
 
@@ -33,15 +33,11 @@ const parseAreaPubDate = (value: string) => {
 };
 
 export const route: Route = {
-    path: '/area/:province-:city-:district-:examTypes-:infoType',
+    path: '/area/:areaPath',
     categories: ['government'],
     example: '/gongkaoleida/area/2129-2156-0-2,3-124',
     parameters: {
-        province: '省份 ID，例如广东为 `2129`',
-        city: '城市 ID，例如深圳为 `2156`，广州为 `2130`',
-        district: '区县 ID，`0` 表示全部',
-        examTypes: '考试类型组合，例如 `2,3`',
-        infoType: '资讯类型，例如 `124`',
+        areaPath: '完整 area 路径，例如 `2129-2156-0-2,3-124`',
     },
     features: {
         requireConfig: false,
@@ -53,8 +49,8 @@ export const route: Route = {
     },
     radar: [
         {
-            source: ['www.gongkaoleida.com/area/:province-:city-:district-:examTypes-:infoType'],
-            target: '/area/:province-:city-:district-:examTypes-:infoType',
+            source: ['www.gongkaoleida.com/area/:areaPath'],
+            target: '/area/:areaPath',
         },
     ],
     name: '地区公告列表',
@@ -65,8 +61,7 @@ export const route: Route = {
 };
 
 async function handler(ctx) {
-    const { province, city, district, examTypes, infoType } = ctx.req.param();
-    const areaPath = `${province}-${city}-${district}-${examTypes}-${infoType}`;
+    const areaPath = ctx.req.param('areaPath');
     const link = buildAreaUrl(areaPath);
 
     const html = await puppeteerGet(link);
