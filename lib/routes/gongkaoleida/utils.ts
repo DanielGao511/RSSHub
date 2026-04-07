@@ -7,7 +7,7 @@ const rootUrl = 'https://www.gongkaoleida.com';
 
 const puppeteerGet = (url: string) =>
     cache.tryGet(url, async () => {
-        const { page, destory } = await getPuppeteerPage(url, {
+        const { page, destroy } = await getPuppeteerPage(url, {
             gotoConfig: {
                 waitUntil: 'domcontentloaded',
             },
@@ -29,7 +29,7 @@ const puppeteerGet = (url: string) =>
             const html = await page.evaluate(() => document.documentElement.innerHTML);
             return html;
         } finally {
-            await destory();
+            await destroy();
         }
     });
 
@@ -62,3 +62,4 @@ const parseAreaList = (html: string) => {
 };
 
 export { buildAreaUrl, parseAreaList, puppeteerGet };
+
