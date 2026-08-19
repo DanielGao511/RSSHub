@@ -5,6 +5,8 @@ services:
     image: rsshub
     build:
       context: .
+      args:
+        PUPPETEER_SKIP_DOWNLOAD: 0
     restart: always
     ports:
       - "1200:1200"

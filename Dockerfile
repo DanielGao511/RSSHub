@@ -160,8 +160,6 @@ RUN \
     fi; \
     rm -rf /var/lib/apt/lists/*
 
-COPY --from=chromium-downloader /app/node_modules/.cache/puppeteer /app/node_modules/.cache/puppeteer
-
 RUN \
     set -ex && \
     if [ "$PUPPETEER_SKIP_DOWNLOAD" = 0 ] && [ "$TARGETPLATFORM" = 'linux/amd64' ]; then \
@@ -177,6 +175,7 @@ RUN \
     fi;
 
 COPY --from=docker-minifier /app /app
+COPY --from=chromium-downloader /app/node_modules/.cache/puppeteer /app/node_modules/.cache/puppeteer
 
 EXPOSE 1200
 ENTRYPOINT ["dumb-init", "--"]
