@@ -15,16 +15,6 @@ const playwrightGet = (url: string) =>
             gotoConfig: {
                 waitUntil: 'domcontentloaded',
             },
-            onBeforeLoad: async (page) => {
-                await page.route('**/*', async (route) => {
-                    const type = route.request().resourceType();
-                    if (type === 'document' || type === 'script' || type === 'xhr' || type === 'fetch' || type === 'stylesheet') {
-                        await route.continue();
-                    } else {
-                        await route.abort();
-                    }
-                });
-            },
         });
 
         try {
