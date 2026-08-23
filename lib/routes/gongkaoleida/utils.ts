@@ -18,9 +18,19 @@ const playwrightGet = (url: string) =>
         });
 
         try {
+            await sleep(3000);
             // The page sometimes renders the area list late in containerized Chromium.
             for (let attempt = 0; attempt < 8; attempt++) {
-                const html = await page.evaluate(() => document.documentElement.innerHTML);
+                let html: string;
+                try {
+                    html = await page.evaluate(() => document.documentElement.innerHTML);
+                } catch (error) {
+                    if (attempt === 7) {
+                        throw error;
+                    }
+                    await sleep(3000);
+                    continue;
+                }
                 if (getListCount(html) > 0) {
                     return html;
                 }
