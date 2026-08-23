@@ -27,7 +27,7 @@ export const route: Route = {
         },
     ],
     name: 'Category',
-    maintainers: ['EthanWng97'],
+    maintainers: ['IvanWng97'],
     handler,
 };
 
@@ -44,6 +44,7 @@ async function handler(ctx) {
         category = await cache.tryGet(`${baseUrl}${categoryApiPath}`, async () => {
             const { data } = await got(`${baseUrl}${categoryApiPath}`, {
                 searchParams: { slug: categorySlug },
+                headers: { accept: 'application/json' },
             });
             if (!data || data.length === 0) {
                 throw new Error(`Category "${categorySlug}" not found`);
@@ -64,6 +65,7 @@ async function handler(ctx) {
             _embed: '',
             ...(categoryId && { categories: categoryId }),
         },
+        headers: { accept: 'application/json' },
     });
 
     const items = postsResponse.data

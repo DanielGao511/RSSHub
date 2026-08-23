@@ -6,7 +6,7 @@ services:
     build:
       context: .
       args:
-        PUPPETEER_SKIP_DOWNLOAD: 0
+        PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 0
     restart: always
     ports:
       - "1200:1200"
@@ -16,6 +16,11 @@ services:
       REDIS_URL: "redis://rss-redis:6379/"
     networks:
       - ai-service
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:1200/healthz']
+      interval: 30s
+      timeout: 10s
+      retries: 3
     depends_on:
       - redis
 
@@ -31,6 +36,12 @@ services:
       resources:
         limits:
           memory: 64M
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 5s
 
 networks:
   ai-service:
