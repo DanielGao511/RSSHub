@@ -1,7 +1,7 @@
 import { load } from 'cheerio';
 
 import cache from '@/utils/cache';
-import { getPuppeteerPage } from '@/utils/puppeteer';
+import { getPlaywrightPage } from '@/utils/playwright';
 
 const rootUrl = 'https://www.gongkaoleida.com';
 
@@ -9,20 +9,19 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const getListCount = (html: string) => load(html)('.notice-list .link-list > li').length;
 
-const puppeteerGet = (url: string) =>
+const playwrightGet = (url: string) =>
     cache.tryGet(url, async () => {
-        const { page, destroy } = await getPuppeteerPage(url, {
+        const { page, destroy } = await getPlaywrightPage(url, {
             gotoConfig: {
                 waitUntil: 'domcontentloaded',
             },
             onBeforeLoad: async (page) => {
-                await page.setRequestInterception(true);
-                page.on('request', (request) => {
-                    const type = request.resourceType();
+                await page.route('**/*', async (route) => {
+                    const type = route.request().resourceType();
                     if (type === 'document' || type === 'script' || type === 'xhr' || type === 'fetch' || type === 'stylesheet') {
-                        request.continue();
+                        await route.continue();
                     } else {
-                        request.abort();
+                        await route.abort();
                     }
                 });
             },
@@ -71,4 +70,4 @@ const parseAreaList = (html: string) => {
     };
 };
 
-export { buildAreaUrl, parseAreaList, puppeteerGet };
+export { buildAreaUrl, parseAreaList, playwrightGet };

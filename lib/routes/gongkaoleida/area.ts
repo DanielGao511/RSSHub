@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 import type { Route } from '@/types';
 import { parseDate } from '@/utils/parse-date';
 
-import { buildAreaUrl, parseAreaList, puppeteerGet } from './utils';
+import { buildAreaUrl, parseAreaList, playwrightGet } from './utils';
 
 const parseAreaPubDate = (value: string) => {
     const text = value.trim();
@@ -64,7 +64,7 @@ async function handler(ctx) {
     const areaPath = ctx.req.param('areaPath');
     const link = buildAreaUrl(areaPath);
 
-    const html = await puppeteerGet(link);
+    const html = await playwrightGet(link);
     const { title, description, items } = parseAreaList(html);
 
     return {
