@@ -16,6 +16,7 @@ test
 .dockerignore
 .editorconfig
 .env*
+rsshub.env*
 .eslint*
 .gitignore
 .markdownlint.jsonc

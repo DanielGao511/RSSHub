@@ -3,6 +3,7 @@
 .devenv
 .direnv
 .env
+rsshub.env
 .eslintcache
 .idea
 .pre-commit-config.yaml
